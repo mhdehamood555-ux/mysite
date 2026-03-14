@@ -178,6 +178,10 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 <img src="https://i.ibb.co/8n64MGC5/IMG-1728.jpg">
 </div>
 
+<div style="font-size:20px;margin:10px">
+أرباح اليوم: <span id="todayMoney">0</span> ₪
+</div>
+
 <div class="main">
 
 <button onclick="startOrder()">إضافة طلبية</button>
@@ -280,6 +284,8 @@ let message=`Delivery سريع 💨
 عزيزي: ${name}
 المحل: ${shop}
 طلبك هو: ${order}
+سعر التوصيل: ${price} شيكل
+
 {الطلب حالياً في مرحلة التحضير}.`
 
 navigator.clipboard.writeText(message)
@@ -289,7 +295,8 @@ window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`)
 orders.push({
 name:name,
 order:order+" / "+shop,
-price:price
+price:price,
+date:Date.now()
 })
 
 localStorage.setItem("orders",JSON.stringify(orders))
@@ -308,6 +315,28 @@ updateTable()
 
 }
 
+function updateMoney(){
+
+let today=new Date().toDateString()
+
+let total=0
+
+orders.forEach(o=>{
+
+let d=new Date(o.date).toDateString()
+
+if(d==today){
+
+total+=Number(o.price)
+
+}
+
+})
+
+document.getElementById("todayMoney").innerText=total
+
+}
+
 function updateTable(){
 
 let table=document.getElementById("table")
@@ -317,22 +346,16 @@ table.innerHTML=""
 orders.forEach((o,i)=>{
 
 table.innerHTML+=`
-
 <tr>
-
 <td>${o.name}</td>
-
 <td>${o.order}</td>
-
 <td>${o.price}</td>
-
 <td><button class="deleteBtn" onclick="deleteOrder(${i})">X</button></td>
-
 </tr>
-
 `
-
 })
+
+updateMoney()
 
 }
 
