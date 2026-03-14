@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Delivery Manager</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Reem+Kufi:wght@600&display=swap" rel="stylesheet">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Delivery">
+
+<link rel="apple-touch-icon" href="https://i.ibb.co/8n64MGC5/IMG-1728.jpg">
+
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
+<style>
+
+body{
+font-family:'Reem Kufi',sans-serif;
+background:#fff8e1;
+margin:0;
+text-align:center;
+direction:rtl;
+transition:0.5s;
+}
+
+header{
+background:#ffeb3b;
+padding:12px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+font-size:20px;
+}
+
+.logo img{
+width:120px;
+margin:15px;
+border-radius:20px;
+box-shadow:0 6px 15px rgba(0,0,0,0.2);
+}
+
+.main button{
+width:90%;
+padding:18px;
+margin:10px;
+font-size:20px;
+background:#ffeb3b;
+border:none;
+border-radius:14px;
+box-shadow:0 4px 10px rgba(0,0,0,0.2);
+transition:0.2s;
+}
+
+.main button:active{
+transform:scale(0.95);
+}
+
+.section{
+display:none;
+padding:20px;
+}
+
+input{
+width:90%;
+padding:14px;
+margin-top:12px;
+font-size:18px;
+border-radius:10px;
+border:1px solid #ccc;
+text-align:center;
+}
+
+.big{
+padding:15px 30px;
+font-size:22px;
+margin-top:20px;
+background:#4CAF50;
+color:white;
+border:none;
+border-radius:12px;
+}
+
+.dangerBtn{
+background:#e53935;
+color:white;
+border:none;
+padding:10px 16px;
+border-radius:8px;
+font-size:18px;
+}
+
+.priceButtons button{
+padding:10px 20px;
+margin:5px;
+border:none;
+background:#ffeb3b;
+border-radius:8px;
+font-size:18px;
+}
+
+table{
+width:95%;
+margin:auto;
+border-collapse:collapse;
+font-size:16px;
+}
+
+th,td{
+border:1px solid #ccc;
+padding:8px;
+}
+
+th{
+background:#ffeb3b;
+}
+
+.deleteBtn{
+background:red;
+color:white;
+border:none;
+padding:5px 8px;
+border-radius:6px;
+}
+
+/* الوضع الليلي */
+
+.night{
+background:#0f172a;
+color:white;
+}
+
+.night header{
+background:#1e293b;
+}
+
+.night .main button{
+background:#334155;
+color:white;
+}
+
+.night table th{
+background:#334155;
+}
+
+.glow{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+pointer-events:none;
+background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 60%);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<button onclick="home()">🏠</button>
+
+<div>
+
+<button class="dangerBtn" onclick="danger()">⚠️ خطر</button>
+
+</div>
+
+</header>
+
+<div class="logo">
+<img src="https://i.ibb.co/8n64MGC5/IMG-1728.jpg">
+</div>
+
+<div class="main">
+
+<button onclick="startOrder()">إضافة طلبية</button>
+
+<button onclick="ready()">جاهز للتوصيل</button>
+
+<button onclick="openSheet()">ورقة الطلبات</button>
+
+</div>
+
+<!-- الطلب -->
+
+<div id="order1" class="section">
+
+<input id="customerName" placeholder="اسم الزبون">
+
+<input id="shop" placeholder="اسم المحل">
+
+<input id="orderText" placeholder="الطلب">
+
+<input id="phone" placeholder="رقم الهاتف">
+
+<h3>سعر التوصيل</h3>
+
+<div class="priceButtons">
+
+<button onclick="setPrice(10)">10</button>
+<button onclick="setPrice(15)">15</button>
+<button onclick="setPrice(20)">20</button>
+<button onclick="setPrice(30)">30</button>
+<button onclick="setPrice(40)">40</button>
+
+</div>
+
+<input id="deliveryPrice" placeholder="السعر المختار" readonly>
+
+<br>
+
+<button class="big" onclick="createOrder()">إرسال</button>
+
+</div>
+
+<!-- الجدول -->
+
+<div id="sheet" class="section">
+
+<button onclick="downloadTable()">تحميل صورة الجدول</button>
+
+<div id="tableArea">
+
+<table>
+
+<thead>
+
+<tr>
+<th>الزبون</th>
+<th>الطلب</th>
+<th>السعر</th>
+<th>حذف</th>
+</tr>
+
+</thead>
+
+<tbody id="table"></tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script>
+
+let orders=JSON.parse(localStorage.getItem("orders")||"[]")
+
+function home(){
+document.querySelectorAll(".section").forEach(e=>e.style.display="none")
+}
+
+function startOrder(){
+home()
+document.getElementById("order1").style.display="block"
+}
+
+function setPrice(p){
+document.getElementById("deliveryPrice").value=p
+}
+
+function createOrder(){
+
+let name=document.getElementById("customerName").value
+let shop=document.getElementById("shop").value
+let order=document.getElementById("orderText").value
+let phone=document.getElementById("phone").value
+let price=document.getElementById("deliveryPrice").value
+
+phone="+972"+phone
+
+let message=`Delivery سريع 💨
+عزيزي: ${name}
+المحل: ${shop}
+طلبك هو: ${order}
+{الطلب حالياً في مرحلة التحضير}.`
+
+navigator.clipboard.writeText(message)
+
+window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`)
+
+orders.push({
+name:name,
+order:order+" / "+shop,
+price:price
+})
+
+localStorage.setItem("orders",JSON.stringify(orders))
+
+updateTable()
+
+}
+
+function openSheet(){
+
+home()
+
+document.getElementById("sheet").style.display="block"
+
+updateTable()
+
+}
+
+function updateTable(){
+
+let table=document.getElementById("table")
+
+table.innerHTML=""
+
+orders.forEach((o,i)=>{
+
+table.innerHTML+=`
+
+<tr>
+
+<td>${o.name}</td>
+
+<td>${o.order}</td>
+
+<td>${o.price}</td>
+
+<td><button class="deleteBtn" onclick="deleteOrder(${i})">X</button></td>
+
+</tr>
+
+`
+
+})
+
+}
+
+function deleteOrder(i){
+
+orders.splice(i,1)
+
+localStorage.setItem("orders",JSON.stringify(orders))
+
+updateTable()
+
+}
+
+function ready(){
+
+let text=`✨تم استلام طلبك من المحل
+الطلب في طريقه اليك 🛵`
+
+navigator.clipboard.writeText(text)
+
+window.open("whatsapp://send")
+
+}
+
+function danger(){
+
+let text=`⚠️ بسبب الوضع الامني في المنطقة من الممكن ان تتأخر طلبيتك بضعة دقائق نتمنى ان تكونو سالمين.`
+
+navigator.clipboard.writeText(text)
+
+window.open("whatsapp://send")
+
+}
+
+function downloadTable(){
+
+html2canvas(document.getElementById("tableArea")).then(canvas=>{
+
+let link=document.createElement("a")
+
+link.download="orders.png"
+
+link.href=canvas.toDataURL()
+
+link.click()
+
+})
+
+}
+
+updateTable()
+
+/* الوضع الليلي */
+
+let hour=new Date().getHours()
+
+if(hour>=19 || hour<=6){
+
+document.body.classList.add("night")
+
+let glow=document.createElement("div")
+
+glow.className="glow"
+
+document.body.appendChild(glow)
+
+}
+
+</script>
+
+</body>
+</html>
