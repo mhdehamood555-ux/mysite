@@ -290,7 +290,7 @@ let message=`Delivery سريع 💨
 
 navigator.clipboard.writeText(message)
 
-window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`)
+window.location.href = `tel:${phone}`
 
 orders.push({
 name:name,
