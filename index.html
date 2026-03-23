@@ -278,7 +278,7 @@ let order=document.getElementById("orderText").value
 let phone=document.getElementById("phone").value
 let price=document.getElementById("deliveryPrice").value
 
-phone="+972"+phone
+
 
 let message=`Delivery سريع 💨
 عزيزي: ${name}
@@ -290,7 +290,7 @@ let message=`Delivery سريع 💨
 
 navigator.clipboard.writeText(message)
 
-window.location.href = `tel:${phone}`
+window.open(`tel:${phone}`, '_self')
 
 orders.push({
 name:name,
