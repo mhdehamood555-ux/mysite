@@ -494,6 +494,8 @@ drawChart()
 
 }
 
+let chartInstance = null;
+
 function drawChart(){
 
 let profits=[]
@@ -507,9 +509,14 @@ profits.push(total - prev)
 
 }
 
-let ctx=document.getElementById("chart")
+let ctx=document.getElementById("chart").getContext("2d")
 
-new Chart(ctx,{
+// حذف الرسم القديم قبل إنشاء جديد
+if(chartInstance){
+chartInstance.destroy()
+}
+
+chartInstance = new Chart(ctx,{
 type:"bar",
 data:{
 labels:profits.map((_,i)=>"يوم "+(i+1)),
@@ -519,6 +526,7 @@ data:profits
 }]
 },
 options:{
+responsive:true,
 scales:{
 y:{
 beginAtZero:true,
