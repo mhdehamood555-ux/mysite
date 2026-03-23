@@ -160,6 +160,8 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 </head>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
 <body>
 
 <header>
@@ -189,6 +191,8 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 <button onclick="ready()">جاهز للتوصيل</button>
 
 <button onclick="openSheet()">ورقة الطلبات</button>
+
+  <button onclick="openFinance()">📊 أرباح الشهر</button>
 
 </div>
 
@@ -250,6 +254,27 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 </table>
 
 </div>
+
+</div>
+
+  <div id="finance" class="section">
+
+<h2>📊 أرباح الشهر</h2>
+
+<table>
+<thead>
+<tr>
+<th>اليوم</th>
+<th>المجموع</th>
+<th>ربح اليوم</th>
+</tr>
+</thead>
+
+<tbody id="financeTable"></tbody>
+
+</table>
+
+<canvas id="chart" height="200"></canvas>
 
 </div>
 
@@ -421,6 +446,87 @@ let glow=document.createElement("div")
 glow.className="glow"
 
 document.body.appendChild(glow)
+
+}
+
+  let finance = JSON.parse(localStorage.getItem("finance") || "[]")
+
+function openFinance(){
+home()
+document.getElementById("finance").style.display="block"
+renderFinance()
+drawChart()
+}
+
+function renderFinance(){
+
+let table=document.getElementById("financeTable")
+table.innerHTML=""
+
+for(let i=0;i<30;i++){
+
+let total=finance[i] || ""
+
+let prev=finance[i-1] || 0
+
+let profit = total ? (total - prev) : ""
+
+table.innerHTML+=`
+<tr>
+<td>يوم ${i+1}</td>
+<td><input value="${total}" onchange="saveFinance(${i},this.value)"></td>
+<td>${profit}</td>
+</tr>
+`
+
+}
+
+}
+
+function saveFinance(i,value){
+
+finance[i]=Number(value)
+
+localStorage.setItem("finance",JSON.stringify(finance))
+
+renderFinance()
+drawChart()
+
+}
+
+function drawChart(){
+
+let profits=[]
+
+for(let i=0;i<30;i++){
+
+let total=finance[i] || 0
+let prev=finance[i-1] || 0
+
+profits.push(total - prev)
+
+}
+
+let ctx=document.getElementById("chart")
+
+new Chart(ctx,{
+type:"bar",
+data:{
+labels:profits.map((_,i)=>"يوم "+(i+1)),
+datasets:[{
+label:"أرباح يومية",
+data:profits
+}]
+},
+options:{
+scales:{
+y:{
+beginAtZero:true,
+max:800
+}
+}
+}
+})
 
 }
 
