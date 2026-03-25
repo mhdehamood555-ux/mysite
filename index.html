@@ -156,35 +156,6 @@ pointer-events:none;
 background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 60%);
 }
 
-  .timeBox{
-background:#fff;
-padding:10px;
-margin-top:15px;
-border-radius:12px;
-box-shadow:0 3px 8px rgba(0,0,0,0.1);
-}
-
-.timeRow{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:6px;
-margin-top:8px;
-}
-
-.timeBtn{
-padding:6px 10px;
-font-size:14px;
-border:none;
-border-radius:20px;
-background:#eee;
-}
-
-.timeBtn.active{
-background:#4CAF50;
-color:white;
-}
-
 </style>
 
 </head>
@@ -237,38 +208,43 @@ color:white;
 
 <h3>الوقت المتوقع (بالدقائق)</h3>
 
-<div class="timeBox">
-
-<div>⏱️ الوقت المتوقع</div>
-
-<div style="margin-top:5px">من</div>
-<div class="timeRow" id="fromRow">
-<button class="timeBtn" onclick="setFrom(this,5)">5</button>
-<button class="timeBtn" onclick="setFrom(this,10)">10</button>
-<button class="timeBtn" onclick="setFrom(this,15)">15</button>
-<button class="timeBtn" onclick="setFrom(this,20)">20</button>
-<button class="timeBtn" onclick="setFrom(this,25)">25</button>
-<button class="timeBtn" onclick="setFrom(this,30)">30</button>
-<button class="timeBtn" onclick="setFrom(this,35)">35</button>
-<button class="timeBtn" onclick="setFrom(this,40)">40</button>
-<button class="timeBtn" onclick="setFrom(this,45)">45</button>
-<button class="timeBtn" onclick="setFrom(this,50)">50</button>
+<div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+  <button onclick="toggleTimeDropdown()" style="padding:6px 12px; font-size:16px; border-radius:8px; background:#ffeb3b; border:none; cursor:pointer;">
+    ⏱️ اختر الوقت المتوقع
+  </button>
+  <span id="timePreview" style="font-size:16px; color:#333;"></span>
 </div>
 
-<div style="margin-top:8px">إلى</div>
-<div class="timeRow" id="toRow">
-<button class="timeBtn" onclick="setTo(this,5)">5</button>
-<button class="timeBtn" onclick="setTo(this,10)">10</button>
-<button class="timeBtn" onclick="setTo(this,15)">15</button>
-<button class="timeBtn" onclick="setTo(this,20)">20</button>
-<button class="timeBtn" onclick="setTo(this,25)">25</button>
-<button class="timeBtn" onclick="setTo(this,30)">30</button>
-<button class="timeBtn" onclick="setTo(this,35)">35</button>
-<button class="timeBtn" onclick="setTo(this,40)">40</button>
-<button class="timeBtn" onclick="setTo(this,45)">45</button>
-<button class="timeBtn" onclick="setTo(this,50)">50</button>
-</div>
+<div id="timeDropdown" style="display:none; margin-top:6px;">
+  من:
+  <select id="fromSelect" onchange="updateToOptions()">
+    <option value="">---</option>
+    <option value="5">5</option>
+    <option value="10">10</option>
+    <option value="15">15</option>
+    <option value="20">20</option>
+    <option value="25">25</option>
+    <option value="30">30</option>
+    <option value="35">35</option>
+    <option value="40">40</option>
+    <option value="45">45</option>
+    <option value="50">50</option>
+  </select>
 
+  إلى:
+  <select id="toSelect" onchange="updateTimePreview()">
+    <option value="">---</option>
+    <option value="5">5</option>
+    <option value="10">10</option>
+    <option value="15">15</option>
+    <option value="20">20</option>
+    <option value="25">25</option>
+    <option value="30">30</option>
+    <option value="35">35</option>
+    <option value="40">40</option>
+    <option value="45">45</option>
+    <option value="50">50</option>
+  </select>
 </div>
 
 <input id="timeFrom" placeholder="من" readonly>
@@ -349,34 +325,60 @@ color:white;
 let fromTime = null
 let toTime = null
 
-function setFrom(btn, v){
-  fromTime = v
-
-  // تفعيل الزر المختار وإلغاء باقي الأزرار
-  document.querySelectorAll("#fromRow .timeBtn").forEach(b => b.classList.remove("active"))
-  btn.classList.add("active")
-
-  // فلترة أزرار "إلى" بحيث تظهر فقط القيم الأكبر
-  document.querySelectorAll("#toRow .timeBtn").forEach(b => {
-    let val = Number(b.innerText)
-    b.style.display = val <= v ? "none" : "inline-block"
-  })
-
-  // إعادة تعيين اختيار to
-  toTime = null
-  document.querySelectorAll("#toRow .timeBtn").forEach(b => b.classList.remove("active"))
+function toggleTimeDropdown(){
+  let dd = document.getElementById("timeDropdown")
+  dd.style.display = dd.style.display === "none" ? "block" : "none"
 }
 
-function setTo(btn, v){
-  toTime = v
+function updateToOptions(){
+  fromTime = Number(document.getElementById("fromSelect").value)
+  let toSelect = document.getElementById("toSelect")
+  Array.from(toSelect.options).forEach(opt=>{
+    opt.style.display = Number(opt.value) > fromTime ? "block" : "none"
+  })
+  updateTimePreview()
+}
 
-  // تفعيل الزر المختار وإلغاء باقي الأزرار
-  document.querySelectorAll("#toRow .timeBtn").forEach(b => b.classList.remove("active"))
-  btn.classList.add("active")
+function updateTimePreview(){
+  toTime = Number(document.getElementById("toSelect").value)
+  let preview = document.getElementById("timePreview")
+  if(fromTime && toTime){
+    let now = new Date()
+    let fromDate = new Date(now.getTime() + fromTime*60000)
+    let toDate = new Date(now.getTime() + toTime*60000)
+    function format(d){ return d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0") }
+    preview.innerText = `⏱️ ${format(fromDate)} - ${format(toDate)}`
+  }else{
+    preview.innerText = ""
+  }
+}
+
+function getTimeRange(){
+  if(!fromTime || !toTime) return ""
+  let now = new Date()
+  let fromDate = new Date(now.getTime() + fromTime*60000)
+  let toDate = new Date(now.getTime() + toTime*60000)
+  function format(d){ return d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0") }
+  return `\n⏱️ الوقت المتوقع للوصول: ${format(fromDate)} - ${format(toDate)}`
 }
   
 
+  function getTimeRange(){
 
+if(fromTime === null || toTime === null) return ""
+
+let now = new Date()
+
+let fromDate = new Date(now.getTime() + fromTime*60000)
+let toDate = new Date(now.getTime() + toTime*60000)
+
+function format(d){
+return d.getHours().toString().padStart(2,"0") + ":" +
+d.getMinutes().toString().padStart(2,"0")
+}
+
+return `\n⏱️ الوقت المتوقع للوصول: ${format(fromDate)} - ${format(toDate)}`
+}
 
 let orders=JSON.parse(localStorage.getItem("orders")||"[]")
 
