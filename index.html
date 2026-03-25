@@ -161,7 +161,7 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 </head>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  
 <body>
 
 <header>
@@ -206,38 +206,10 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <input id="orderText" placeholder="الطلب">
 
-<h3>الوقت المتوقع (بالدقائق)</h3>
-
-<div class="priceButtons">
-<p>من:</p>
-<button onclick="setFrom(5)">5</button>
-<button onclick="setFrom(10)">10</button>
-<button onclick="setFrom(15)">15</button>
-<button onclick="setFrom(20)">20</button>
-<button onclick="setFrom(25)">25</button>
-<button onclick="setFrom(30)">30</button>
-<button onclick="setFrom(35)">35</button>
-<button onclick="setFrom(40)">40</button>
-<button onclick="setFrom(45)">45</button>
-<button onclick="setFrom(50)">50</button>
+<div style="display:flex; gap:10px; justify-content:center;">
+  <input id="timeFrom" placeholder="من (دقيقة)">
+  <input id="timeTo" placeholder="إلى (دقيقة)">
 </div>
-
-<div class="priceButtons" id="toButtons">
-<p>إلى:</p>
-<button onclick="setTo(5)">5</button>
-<button onclick="setTo(10)">10</button>
-<button onclick="setTo(15)">15</button>
-<button onclick="setTo(20)">20</button>
-<button onclick="setTo(25)">25</button>
-<button onclick="setTo(30)">30</button>
-<button onclick="setTo(35)">35</button>
-<button onclick="setTo(40)">40</button>
-<button onclick="setTo(45)">45</button>
-<button onclick="setTo(50)">50</button>
-</div>
-
-<input id="timeFrom" placeholder="من" readonly>
-<input id="timeTo" placeholder="إلى" readonly>
 
 <h3>سعر التوصيل</h3>
 
@@ -311,47 +283,6 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <script>
 
-
-  let fromTime = null
-let toTime = null
-
-function setFrom(v){
-fromTime = v
-document.getElementById("timeFrom").value = v + " دقيقة"
-
-// فلترة أزرار "إلى"
-let buttons = document.querySelectorAll("#toButtons button")
-buttons.forEach(btn=>{
-if(Number(btn.innerText) <= v){
-btn.style.display="none"
-}else{
-btn.style.display="inline-block"
-}
-})
-}
-
-function setTo(v){
-toTime = v
-document.getElementById("timeTo").value = v + " دقيقة"
-}
-
-  function getTimeRange(){
-
-if(fromTime === null || toTime === null) return ""
-
-let now = new Date()
-
-let fromDate = new Date(now.getTime() + fromTime*60000)
-let toDate = new Date(now.getTime() + toTime*60000)
-
-function format(d){
-return d.getHours().toString().padStart(2,"0") + ":" +
-d.getMinutes().toString().padStart(2,"0")
-}
-
-return `\n⏱️ الوقت المتوقع للوصول: ${format(fromDate)} - ${format(toDate)}`
-}
-
 let orders=JSON.parse(localStorage.getItem("orders")||"[]")
 
 function home(){
@@ -372,30 +303,43 @@ function createOrder(){
 let name=document.getElementById("customerName").value
 let shop=document.getElementById("shop").value
 let order=document.getElementById("orderText").value
-let phone=document.getElementById("phone").value
+let from = document.getElementById("timeFrom").value
+let to = document.getElementById("timeTo").value
+
+let timeText = ""
+
+if(from && to){
+
+let now = new Date()
+
+let fromTime = new Date(now.getTime() + from*60000)
+let toTime = new Date(now.getTime() + to*60000)
+
+let fromStr = fromTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+let toStr = toTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+
+timeText = `
+⏳ وقت الوصول المتوقع:
+${fromStr} - ${toStr}
+`
+}
 let price=document.getElementById("deliveryPrice").value
 
 
-
-let timeText = getTimeRange()
 
 let message=`Delivery سريع 💨
 عزيزي: ${name}
 المحل: ${shop}
 طلبك هو: ${order}
-سعر التوصيل: ${price} شيكل
+سعر التوصيل:${price} شيكل
+🚚 يصل بين:
 ${timeText}
 
 {الطلب حالياً في مرحلة التحضير}.`
 
 
-
-// نسخ الرسالة فقط
 navigator.clipboard.writeText(message)
-
-window.open(`tel:${phone}`, '_self')
-// (اختياري) تنبيه بسيط
-alert("تم نسخ الرسالة")
+alert("تم نسخ الرسالة 👍")
 
 orders.push({
 name:name,
