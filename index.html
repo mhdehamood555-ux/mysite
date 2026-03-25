@@ -346,58 +346,37 @@ color:white;
 
 <script>
 
-
-  let fromTime = null
+let fromTime = null
 let toTime = null
 
-function setFrom(btn,v){
+function setFrom(btn, v){
+  fromTime = v
 
-fromTime = v
+  // تفعيل الزر المختار وإلغاء باقي الأزرار
+  document.querySelectorAll("#fromRow .timeBtn").forEach(b => b.classList.remove("active"))
+  btn.classList.add("active")
 
-// تحديد الزر المختار
-document.querySelectorAll("#fromRow .timeBtn").forEach(b=>b.classList.remove("active"))
-btn.classList.add("active")
+  // فلترة أزرار "إلى" بحيث تظهر فقط القيم الأكبر
+  document.querySelectorAll("#toRow .timeBtn").forEach(b => {
+    let val = Number(b.innerText)
+    b.style.display = val <= v ? "none" : "inline-block"
+  })
 
-// فلترة "إلى"
-document.querySelectorAll("#toRow .timeBtn").forEach(b=>{
-let val = Number(b.innerText)
-b.style.display = val <= v ? "none" : "inline-block"
-})
-
-toTime = null
-document.querySelectorAll("#toRow .timeBtn").forEach(b=>b.classList.remove("active"))
+  // إعادة تعيين اختيار to
+  toTime = null
+  document.querySelectorAll("#toRow .timeBtn").forEach(b => b.classList.remove("active"))
 }
 
-function setTo(btn,v){
+function setTo(btn, v){
+  toTime = v
 
-toTime = v
-
-document.querySelectorAll("#toRow .timeBtn").forEach(b=>b.classList.remove("active"))
-btn.classList.add("active")
-
+  // تفعيل الزر المختار وإلغاء باقي الأزرار
+  document.querySelectorAll("#toRow .timeBtn").forEach(b => b.classList.remove("active"))
+  btn.classList.add("active")
 }
+  
 
-function setTo(v){
-toTime = v
-document.getElementById("timeTo").value = v + " دقيقة"
-}
 
-  function getTimeRange(){
-
-if(fromTime === null || toTime === null) return ""
-
-let now = new Date()
-
-let fromDate = new Date(now.getTime() + fromTime*60000)
-let toDate = new Date(now.getTime() + toTime*60000)
-
-function format(d){
-return d.getHours().toString().padStart(2,"0") + ":" +
-d.getMinutes().toString().padStart(2,"0")
-}
-
-return `\n⏱️ الوقت المتوقع للوصول: ${format(fromDate)} - ${format(toDate)}`
-}
 
 let orders=JSON.parse(localStorage.getItem("orders")||"[]")
 
