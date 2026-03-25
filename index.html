@@ -413,8 +413,10 @@ price: price,
 date: Date.now()
 })
 
+// 🔥 هذا كان ناقص
 localStorage.setItem("orders", JSON.stringify(orders))
 
+// 🔥 هذا كان ناقص
 updateTable()
 
 // تفريغ الحقول
@@ -423,7 +425,7 @@ document.getElementById("shop").value = ""
 document.getElementById("orderText").value = ""
 document.getElementById("deliveryPrice").value = ""
 
-// إعادة تعيين أزرار الوقت
+// إعادة تعيين الوقت
 fromTimeValue = null
 toTimeValue = null
 
@@ -431,7 +433,7 @@ document.getElementById("fromDisplay").innerText = "-"
 document.getElementById("toDisplay").innerText = "-"
 
 }
-
+  
 function updateTable(){
 
 let table=document.getElementById("table")
