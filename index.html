@@ -298,91 +298,74 @@ function setPrice(p){
 document.getElementById("deliveryPrice").value=p
 }
 
-function createOrder(){
+  function createOrder(){
 
-let name=document.getElementById("customerName").value
-let shop=document.getElementById("shop").value
-let order=document.getElementById("orderText").value
+let name = document.getElementById("customerName").value.trim()
+let shop = document.getElementById("shop").value.trim()
+let order = document.getElementById("orderText").value.trim()
+let price = document.getElementById("deliveryPrice").value
+
 let from = document.getElementById("timeFrom").value
 let to = document.getElementById("timeTo").value
 
 let timeText = ""
 
+// فقط إذا الاثنين موجودين
 if(from && to){
+
+from = Number(from)
+to = Number(to)
 
 let now = new Date()
 
-let fromTime = new Date(now.getTime() + from*60000)
-let toTime = new Date(now.getTime() + to*60000)
+let fromTime = new Date(now.getTime() + from * 60000)
+let toTime = new Date(now.getTime() + to * 60000)
 
 let fromStr = fromTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
 let toStr = toTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
 
-timeText = `
-⏳ وقت الوصول المتوقع:
-${fromStr} - ${toStr}
-`
+// نص نظيف بدون فراغات زيادة
+timeText = `🚚 يصل بين: ${fromStr} - ${toStr}`
 }
-let price=document.getElementById("deliveryPrice").value
 
-
-
-let message=`Delivery سريع 💨
+// بناء الرسالة
+let message = `Delivery سريع 💨
 عزيزي: ${name}
 المحل: ${shop}
 طلبك هو: ${order}
-سعر التوصيل:${price} شيكل
-🚚 يصل بين:
-${timeText}
+سعر التوصيل: ${price} شيكل`
 
-{الطلب حالياً في مرحلة التحضير}.`
+// إضافة الوقت فقط إذا موجود
+if(timeText){
+message += `\n${timeText}`
+}
 
+// تكملة الرسالة
+message += `\n\n{الطلب حالياً في مرحلة التحضير}.`
 
+// نسخ الرسالة
 navigator.clipboard.writeText(message)
 alert("تم نسخ الرسالة 👍")
 
+// حفظ الطلب
 orders.push({
-name:name,
-order:order+" / "+shop,
-price:price,
-date:Date.now()
+name: name,
+order: order + " / " + shop,
+price: price,
+date: Date.now()
 })
 
-localStorage.setItem("orders",JSON.stringify(orders))
+localStorage.setItem("orders", JSON.stringify(orders))
 
 updateTable()
 
-}
-
-function openSheet(){
-
-home()
-
-document.getElementById("sheet").style.display="block"
-
-updateTable()
-
-}
-
-function updateMoney(){
-
-let today=new Date().toDateString()
-
-let total=0
-
-orders.forEach(o=>{
-
-let d=new Date(o.date).toDateString()
-
-if(d==today){
-
-total+=Number(o.price)
-
-}
-
-})
-
-document.getElementById("todayMoney").innerText=total
+// تفريغ الحقول (تحسين مهم للسرعة)
+document.getElementById("customerName").value = ""
+document.getElementById("shop").value = ""
+document.getElementById("orderText").value = ""
+document.getElementById("timeFrom").value = ""
+document.getElementById("timeTo").value = ""
+document.getElementById("deliveryPrice").value = ""
 
 }
 
