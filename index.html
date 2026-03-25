@@ -307,58 +307,9 @@ font-size:18px;
 <script>
 
 
-  console.log("JS شغال")
+  
   
 let orders=JSON.parse(localStorage.getItem("orders")||"[]")
-
-
-  
- function drawChart(){
-
-let canvas = document.getElementById("chart")
-if(!canvas) return
-
-let ctx = canvas.getContext("2d")
-
-let profits=[]
-
-for(let i=0;i<30;i++){
-let total=finance[i] || 0
-let prev=finance[i-1] || 0
-profits.push(total - prev)
-}
-
-// إذا Chart مش موجود لا تكسر الموقع
-if(typeof Chart === "undefined"){
-console.log("Chart.js not loaded")
-return
-}
-
-if(chartInstance){
-chartInstance.destroy()
-}
-
-chartInstance = new Chart(ctx,{
-type:"bar",
-data:{
-labels:profits.map((_,i)=>"يوم "+(i+1)),
-datasets:[{
-label:"أرباح يومية",
-data:profits
-}]
-},
-options:{
-responsive:true,
-scales:{
-y:{
-beginAtZero:true,
-max:800
-}
-}
-}
-})
-
-}
 
   
 function home(){
@@ -433,7 +384,7 @@ let fromStr = fromTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}
 let toStr = toTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
 
 timeText = `🛵 يصل بين: ${fromStr} - ${toStr}`
-}
+}`
 
 // بناء الرسالة
 let message = `Delivery سريع 💨
@@ -460,7 +411,7 @@ name: name,
 order: order + " / " + shop,
 price: price,
 date: Date.now()
-})
+})`
 
 localStorage.setItem("orders", JSON.stringify(orders))
 
