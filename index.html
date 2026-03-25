@@ -206,7 +206,10 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <input id="orderText" placeholder="الطلب">
 
-<input id="phone" placeholder="رقم الهاتف">
+<div style="display:flex; gap:10px; justify-content:center;">
+  <input id="timeFrom" placeholder="من (دقيقة)">
+  <input id="timeTo" placeholder="إلى (دقيقة)">
+</div>
 
 <h3>سعر التوصيل</h3>
 
@@ -300,7 +303,26 @@ function createOrder(){
 let name=document.getElementById("customerName").value
 let shop=document.getElementById("shop").value
 let order=document.getElementById("orderText").value
-let phone=document.getElementById("phone").value
+let from = document.getElementById("timeFrom").value
+let to = document.getElementById("timeTo").value
+
+let timeText = ""
+
+if(from && to){
+
+let now = new Date()
+
+let fromTime = new Date(now.getTime() + from*60000)
+let toTime = new Date(now.getTime() + to*60000)
+
+let fromStr = fromTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+let toStr = toTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+
+timeText = `
+⏳ وقت الوصول المتوقع:
+${fromStr} - ${toStr}
+`
+}
 let price=document.getElementById("deliveryPrice").value
 
 
@@ -309,13 +331,15 @@ let message=`Delivery سريع 💨
 عزيزي: ${name}
 المحل: ${shop}
 طلبك هو: ${order}
-سعر التوصيل: ${price} شيكل
-السعر شامل:
+سعر التوصيل:${price} شيكل
+🚚 يصل بين:
+${timeText}
+
 {الطلب حالياً في مرحلة التحضير}.`
 
-navigator.clipboard.writeText(message)
 
-window.open(`tel:${phone}`, '_self')
+navigator.clipboard.writeText(message)
+alert("تم نسخ الرسالة 👍")
 
 orders.push({
 name:name,
