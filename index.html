@@ -384,7 +384,7 @@ let fromStr = fromTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}
 let toStr = toTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
 
 timeText = `🛵 يصل بين: ${fromStr} - ${toStr}`
-}`
+}
 
 // بناء الرسالة
 let message = `Delivery سريع 💨
@@ -411,7 +411,7 @@ name: name,
 order: order + " / " + shop,
 price: price,
 date: Date.now()
-})`
+})
 
 localStorage.setItem("orders", JSON.stringify(orders))
 
