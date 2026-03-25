@@ -156,6 +156,35 @@ pointer-events:none;
 background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 60%);
 }
 
+  .timeBox{
+background:#fff;
+padding:10px;
+margin-top:15px;
+border-radius:12px;
+box-shadow:0 3px 8px rgba(0,0,0,0.1);
+}
+
+.timeRow{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:6px;
+margin-top:8px;
+}
+
+.timeBtn{
+padding:6px 10px;
+font-size:14px;
+border:none;
+border-radius:20px;
+background:#eee;
+}
+
+.timeBtn.active{
+background:#4CAF50;
+color:white;
+}
+
 </style>
 
 </head>
@@ -208,32 +237,38 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <h3>الوقت المتوقع (بالدقائق)</h3>
 
-<div class="priceButtons">
-<p>من:</p>
-<button onclick="setFrom(5)">5</button>
-<button onclick="setFrom(10)">10</button>
-<button onclick="setFrom(15)">15</button>
-<button onclick="setFrom(20)">20</button>
-<button onclick="setFrom(25)">25</button>
-<button onclick="setFrom(30)">30</button>
-<button onclick="setFrom(35)">35</button>
-<button onclick="setFrom(40)">40</button>
-<button onclick="setFrom(45)">45</button>
-<button onclick="setFrom(50)">50</button>
+<div class="timeBox">
+
+<div>⏱️ الوقت المتوقع</div>
+
+<div style="margin-top:5px">من</div>
+<div class="timeRow" id="fromRow">
+<button class="timeBtn" onclick="setFrom(this,5)">5</button>
+<button class="timeBtn" onclick="setFrom(this,10)">10</button>
+<button class="timeBtn" onclick="setFrom(this,15)">15</button>
+<button class="timeBtn" onclick="setFrom(this,20)">20</button>
+<button class="timeBtn" onclick="setFrom(this,25)">25</button>
+<button class="timeBtn" onclick="setFrom(this,30)">30</button>
+<button class="timeBtn" onclick="setFrom(this,35)">35</button>
+<button class="timeBtn" onclick="setFrom(this,40)">40</button>
+<button class="timeBtn" onclick="setFrom(this,45)">45</button>
+<button class="timeBtn" onclick="setFrom(this,50)">50</button>
 </div>
 
-<div class="priceButtons" id="toButtons">
-<p>إلى:</p>
-<button onclick="setTo(5)">5</button>
-<button onclick="setTo(10)">10</button>
-<button onclick="setTo(15)">15</button>
-<button onclick="setTo(20)">20</button>
-<button onclick="setTo(25)">25</button>
-<button onclick="setTo(30)">30</button>
-<button onclick="setTo(35)">35</button>
-<button onclick="setTo(40)">40</button>
-<button onclick="setTo(45)">45</button>
-<button onclick="setTo(50)">50</button>
+<div style="margin-top:8px">إلى</div>
+<div class="timeRow" id="toRow">
+<button class="timeBtn" onclick="setTo(this,5)">5</button>
+<button class="timeBtn" onclick="setTo(this,10)">10</button>
+<button class="timeBtn" onclick="setTo(this,15)">15</button>
+<button class="timeBtn" onclick="setTo(this,20)">20</button>
+<button class="timeBtn" onclick="setTo(this,25)">25</button>
+<button class="timeBtn" onclick="setTo(this,30)">30</button>
+<button class="timeBtn" onclick="setTo(this,35)">35</button>
+<button class="timeBtn" onclick="setTo(this,40)">40</button>
+<button class="timeBtn" onclick="setTo(this,45)">45</button>
+<button class="timeBtn" onclick="setTo(this,50)">50</button>
+</div>
+
 </div>
 
 <input id="timeFrom" placeholder="من" readonly>
@@ -315,19 +350,31 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
   let fromTime = null
 let toTime = null
 
-function setFrom(v){
-fromTime = v
-document.getElementById("timeFrom").value = v + " دقيقة"
+function setFrom(btn,v){
 
-// فلترة أزرار "إلى"
-let buttons = document.querySelectorAll("#toButtons button")
-buttons.forEach(btn=>{
-if(Number(btn.innerText) <= v){
-btn.style.display="none"
-}else{
-btn.style.display="inline-block"
-}
+fromTime = v
+
+// تحديد الزر المختار
+document.querySelectorAll("#fromRow .timeBtn").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+
+// فلترة "إلى"
+document.querySelectorAll("#toRow .timeBtn").forEach(b=>{
+let val = Number(b.innerText)
+b.style.display = val <= v ? "none" : "inline-block"
 })
+
+toTime = null
+document.querySelectorAll("#toRow .timeBtn").forEach(b=>b.classList.remove("active"))
+}
+
+function setTo(btn,v){
+
+toTime = v
+
+document.querySelectorAll("#toRow .timeBtn").forEach(b=>b.classList.remove("active"))
+btn.classList.add("active")
+
 }
 
 function setTo(v){
