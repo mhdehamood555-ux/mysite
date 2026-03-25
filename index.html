@@ -372,10 +372,7 @@ function createOrder(){
 let name=document.getElementById("customerName").value
 let shop=document.getElementById("shop").value
 let order=document.getElementById("orderText").value
-let phone=document.getElementById("phone").value
 let price=document.getElementById("deliveryPrice").value
-
-
 
 let timeText = getTimeRange()
 
@@ -388,11 +385,11 @@ ${timeText}
 
 {الطلب حالياً في مرحلة التحضير}.`
 
-
-
+// نسخ الرسالة فقط
 navigator.clipboard.writeText(message)
 
-window.open(`tel:${phone}`, '_self')
+// (اختياري) تنبيه بسيط
+alert("تم نسخ الرسالة")
 
 orders.push({
 name:name,
