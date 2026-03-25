@@ -156,21 +156,12 @@ pointer-events:none;
 background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 60%);
 }
 
-  .timeButtons button{
-padding:10px 15px;
-margin:5px;
-border:none;
-background:#ffeb3b;
-border-radius:8px;
-font-size:18px;
-}
-
 </style>
 
 </head>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  
+
 <body>
 
 <header>
@@ -215,25 +206,8 @@ font-size:18px;
 
 <input id="orderText" placeholder="الطلب">
 
-<div class="timeButtons">
+<input id="phone" placeholder="رقم الهاتف">
 
-<button onclick="selectTime(5)">5</button>
-<button onclick="selectTime(10)">10</button>
-<button onclick="selectTime(15)">15</button>
-<button onclick="selectTime(20)">20</button>
-<button onclick="selectTime(25)">25</button>
-<button onclick="selectTime(30)">30</button>
-<button onclick="selectTime(35)">35</button>
-<button onclick="selectTime(40)">40</button>
-<button onclick="selectTime(45)">45</button>
-<button onclick="selectTime(50)">50</button>
-
-</div>
-
-<div style="margin-top:10px;font-size:18px;">
-من: <span id="fromDisplay">-</span> دقيقة |
-إلى: <span id="toDisplay">-</span> دقيقة
-</div>
 <h3>سعر التوصيل</h3>
 
 <div class="priceButtons">
@@ -306,12 +280,8 @@ font-size:18px;
 
 <script>
 
-
-  
-  
 let orders=JSON.parse(localStorage.getItem("orders")||"[]")
 
-  
 function home(){
 document.querySelectorAll(".section").forEach(e=>e.style.display="none")
 }
@@ -325,115 +295,74 @@ function setPrice(p){
 document.getElementById("deliveryPrice").value=p
 }
 
-  let fromTimeValue = null
-let toTimeValue = null
+function createOrder(){
 
-function selectTime(value){
+let name=document.getElementById("customerName").value
+let shop=document.getElementById("shop").value
+let order=document.getElementById("orderText").value
+let phone=document.getElementById("phone").value
+let price=document.getElementById("deliveryPrice").value
 
-// أول ضغطة = من
-if(fromTimeValue === null){
-fromTimeValue = value
-document.getElementById("fromDisplay").innerText = value
-return
-}
 
-// ثاني ضغطة = إلى
-if(toTimeValue === null){
-toTimeValue = value
 
-// تأكد أن "إلى" أكبر من "من"
-if(toTimeValue < fromTimeValue){
-let temp = fromTimeValue
-fromTimeValue = toTimeValue
-toTimeValue = temp
-}
-
-document.getElementById("toDisplay").innerText = toTimeValue
-return
-}
-
-// إذا ضغط مرة ثالثة → إعادة تعيين
-fromTimeValue = value
-toTimeValue = null
-
-document.getElementById("fromDisplay").innerText = value
-document.getElementById("toDisplay").innerText = "-"
-}
-
-  function createOrder(){
-
-let name = document.getElementById("customerName").value.trim()
-let shop = document.getElementById("shop").value.trim()
-let order = document.getElementById("orderText").value.trim()
-let price = document.getElementById("deliveryPrice").value
-
-let from = fromTimeValue
-let to = toTimeValue
-
-let timeText = ""
-
-// فقط إذا تم اختيار وقتين
-if(from !== null && to !== null){
-
-let now = new Date()
-
-let fromTime = new Date(now.getTime() + from * 60000)
-let toTime = new Date(now.getTime() + to * 60000)
-
-let fromStr = fromTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-let toStr = toTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
-
-timeText = `🛵 يصل بين: ${fromStr} - ${toStr}`
-}
-
-// بناء الرسالة
-let message = `Delivery سريع 💨
+let message=`Delivery سريع 💨
 عزيزي: ${name}
 المحل: ${shop}
 طلبك هو: ${order}
-سعر التوصيل: ${price} شيكل`
+سعر التوصيل: ${price} شيكل
 
-// إضافة الوقت فقط إذا موجود
-if(timeText){
-message += `\n${timeText}`
-}
+السعر شامل:
+{الطلب حالياً في مرحلة التحضير}.`
 
-// نهاية الرسالة
-message += `\n\n{الطلب حالياً في مرحلة التحضير}.`
-
-// نسخ الرسالة
 navigator.clipboard.writeText(message)
-alert("تم نسخ الرسالة 👍")
 
-// حفظ الطلب
+window.open(`tel:${phone}`, '_self')
+
 orders.push({
-name: name,
-order: order + " / " + shop,
-price: price,
-date: Date.now()
+name:name,
+order:order+" / "+shop,
+price:price,
+date:Date.now()
 })
 
-// 🔥 هذا كان ناقص
-localStorage.setItem("orders", JSON.stringify(orders))
+localStorage.setItem("orders",JSON.stringify(orders))
 
-// 🔥 هذا كان ناقص
 updateTable()
 
-// تفريغ الحقول
-document.getElementById("customerName").value = ""
-document.getElementById("shop").value = ""
-document.getElementById("orderText").value = ""
-document.getElementById("deliveryPrice").value = ""
+}
 
-// إعادة تعيين الوقت
-fromTimeValue = null
-toTimeValue = null
+function openSheet(){
 
-document.getElementById("fromDisplay").innerText = "-"
-document.getElementById("toDisplay").innerText = "-"
+home()
+
+document.getElementById("sheet").style.display="block"
+
+updateTable()
 
 }
-  
+
+function updateMoney(){
+
+let today=new Date().toDateString()
+
+let total=0
+
+orders.forEach(o=>{
+
+let d=new Date(o.date).toDateString()
+
+if(d==today){
+
+total+=Number(o.price)
+
+}
+
+})
+
+document.getElementById("todayMoney").innerText=total
+
+}
+
 function updateTable(){
 
 let table=document.getElementById("table")
@@ -610,11 +539,7 @@ max:800
 
 }
 
-
-  
 </script>
 
-
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </body>
 </html>
