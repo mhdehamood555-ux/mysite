@@ -208,43 +208,32 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <h3>الوقت المتوقع (بالدقائق)</h3>
 
-<div style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-  <button onclick="toggleTimeDropdown()" style="padding:6px 12px; font-size:16px; border-radius:8px; background:#ffeb3b; border:none; cursor:pointer;">
-    ⏱️ اختر الوقت المتوقع
-  </button>
-  <span id="timePreview" style="font-size:16px; color:#333;"></span>
+<div class="priceButtons">
+<p>من:</p>
+<button onclick="setFrom(5)">5</button>
+<button onclick="setFrom(10)">10</button>
+<button onclick="setFrom(15)">15</button>
+<button onclick="setFrom(20)">20</button>
+<button onclick="setFrom(25)">25</button>
+<button onclick="setFrom(30)">30</button>
+<button onclick="setFrom(35)">35</button>
+<button onclick="setFrom(40)">40</button>
+<button onclick="setFrom(45)">45</button>
+<button onclick="setFrom(50)">50</button>
 </div>
 
-<div id="timeDropdown" style="display:none; margin-top:6px;">
-  من:
-  <select id="fromSelect" onchange="updateToOptions()">
-    <option value="">---</option>
-    <option value="5">5</option>
-    <option value="10">10</option>
-    <option value="15">15</option>
-    <option value="20">20</option>
-    <option value="25">25</option>
-    <option value="30">30</option>
-    <option value="35">35</option>
-    <option value="40">40</option>
-    <option value="45">45</option>
-    <option value="50">50</option>
-  </select>
-
-  إلى:
-  <select id="toSelect" onchange="updateTimePreview()">
-    <option value="">---</option>
-    <option value="5">5</option>
-    <option value="10">10</option>
-    <option value="15">15</option>
-    <option value="20">20</option>
-    <option value="25">25</option>
-    <option value="30">30</option>
-    <option value="35">35</option>
-    <option value="40">40</option>
-    <option value="45">45</option>
-    <option value="50">50</option>
-  </select>
+<div class="priceButtons" id="toButtons">
+<p>إلى:</p>
+<button onclick="setTo(5)">5</button>
+<button onclick="setTo(10)">10</button>
+<button onclick="setTo(15)">15</button>
+<button onclick="setTo(20)">20</button>
+<button onclick="setTo(25)">25</button>
+<button onclick="setTo(30)">30</button>
+<button onclick="setTo(35)">35</button>
+<button onclick="setTo(40)">40</button>
+<button onclick="setTo(45)">45</button>
+<button onclick="setTo(50)">50</button>
 </div>
 
 <input id="timeFrom" placeholder="من" readonly>
@@ -322,46 +311,29 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <script>
 
-let fromTime = null
+
+  let fromTime = null
 let toTime = null
 
-function toggleTimeDropdown(){
-  let dd = document.getElementById("timeDropdown")
-  dd.style.display = dd.style.display === "none" ? "block" : "none"
+function setFrom(v){
+fromTime = v
+document.getElementById("timeFrom").value = v + " دقيقة"
+
+// فلترة أزرار "إلى"
+let buttons = document.querySelectorAll("#toButtons button")
+buttons.forEach(btn=>{
+if(Number(btn.innerText) <= v){
+btn.style.display="none"
+}else{
+btn.style.display="inline-block"
+}
+})
 }
 
-function updateToOptions(){
-  fromTime = Number(document.getElementById("fromSelect").value)
-  let toSelect = document.getElementById("toSelect")
-  Array.from(toSelect.options).forEach(opt=>{
-    opt.style.display = Number(opt.value) > fromTime ? "block" : "none"
-  })
-  updateTimePreview()
+function setTo(v){
+toTime = v
+document.getElementById("timeTo").value = v + " دقيقة"
 }
-
-function updateTimePreview(){
-  toTime = Number(document.getElementById("toSelect").value)
-  let preview = document.getElementById("timePreview")
-  if(fromTime && toTime){
-    let now = new Date()
-    let fromDate = new Date(now.getTime() + fromTime*60000)
-    let toDate = new Date(now.getTime() + toTime*60000)
-    function format(d){ return d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0") }
-    preview.innerText = `⏱️ ${format(fromDate)} - ${format(toDate)}`
-  }else{
-    preview.innerText = ""
-  }
-}
-
-function getTimeRange(){
-  if(!fromTime || !toTime) return ""
-  let now = new Date()
-  let fromDate = new Date(now.getTime() + fromTime*60000)
-  let toDate = new Date(now.getTime() + toTime*60000)
-  function format(d){ return d.getHours().toString().padStart(2,"0")+":"+d.getMinutes().toString().padStart(2,"0") }
-  return `\n⏱️ الوقت المتوقع للوصول: ${format(fromDate)} - ${format(toDate)}`
-}
-  
 
   function getTimeRange(){
 
