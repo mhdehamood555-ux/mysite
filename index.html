@@ -365,14 +365,11 @@ let price = document.getElementById("deliveryPrice").value
 
 let from = fromTimeValue
 let to = toTimeValue
-    
+
 let timeText = ""
 
-// فقط إذا الاثنين موجودين
-if(from && to){
-
-from = Number(from)
-to = Number(to)
+// فقط إذا تم اختيار وقتين
+if(from !== null && to !== null){
 
 let now = new Date()
 
@@ -382,7 +379,6 @@ let toTime = new Date(now.getTime() + to * 60000)
 let fromStr = fromTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
 let toStr = toTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
 
-// نص نظيف بدون فراغات زيادة
 timeText = `🛵 يصل بين: ${fromStr} - ${toStr}`
 }
 
@@ -398,7 +394,7 @@ if(timeText){
 message += `\n${timeText}`
 }
 
-// تكملة الرسالة
+// نهاية الرسالة
 message += `\n\n{الطلب حالياً في مرحلة التحضير}.`
 
 // نسخ الرسالة
@@ -417,21 +413,19 @@ localStorage.setItem("orders", JSON.stringify(orders))
 
 updateTable()
 
-// تفريغ الحقول (تحسين مهم للسرعة)
+// تفريغ الحقول
 document.getElementById("customerName").value = ""
 document.getElementById("shop").value = ""
 document.getElementById("orderText").value = ""
-document.getElementById("timeFrom").value = ""
-document.getElementById("timeTo").value = ""
 document.getElementById("deliveryPrice").value = ""
 
-
-    fromTimeValue = null
+// إعادة تعيين أزرار الوقت
+fromTimeValue = null
 toTimeValue = null
 
 document.getElementById("fromDisplay").innerText = "-"
 document.getElementById("toDisplay").innerText = "-"
-    
+
 }
 
 function updateTable(){
