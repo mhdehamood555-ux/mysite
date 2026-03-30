@@ -490,15 +490,13 @@ for(let i=0;i<30;i++){
 
 let total=finance[i] || ""
 
-let prev=finance[i-1] || 0
-
-let profit = total ? (total - prev) : ""
+let profit = total ? (total - 600) : ""
 
 table.innerHTML+=`
 <tr>
 <td>يوم ${i+1}</td>
 <td><input value="${total}" onchange="saveFinance(${i},this.value)"></td>
-<td>${profit}</td>
+<td style="color:${profit<0?'red':'lime'}">${profit}</td>
 </tr>
 `
 
@@ -526,9 +524,8 @@ let profits=[]
 for(let i=0;i<30;i++){
 
 let total=finance[i] || 0
-let prev=finance[i-1] || 0
 
-profits.push(total - prev)
+  profits.push(total ? (total - 600) : 0)
 
 }
 
