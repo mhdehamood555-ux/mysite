@@ -207,10 +207,10 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 <input id="orderText" placeholder="الطلب">
 
 <div style="display:flex; gap:10px; justify-content:center;">
-  <input id="timeFrom" type="number" min="0" max="120" placeholder="من (دقيقة)">
-  <input id="timeTo" type="number" min="0" max="120" placeholder="إلى (دقيقة)">
+  <input id="timeFrom" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="من (دقيقة)">
+  <input id="timeTo" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="إلى (دقيقة)">
 </div>
-
+  
 <h3>سعر التوصيل</h3>
 
 <div class="priceButtons">
