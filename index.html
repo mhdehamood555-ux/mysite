@@ -188,7 +188,7 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <button onclick="startOrder()">إضافة طلبية</button>
 
-<button onclick="ready()">جاهز للتوصيل</button>
+<button onclick="ready()">جاهز ✅</button>
 
 <button onclick="openSheet()">ورقة الطلبات</button>
 
@@ -199,8 +199,6 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 <!-- الطلب -->
 
 <div id="order1" class="section">
-
-<input id="customerName" placeholder="اسم الزبون">
 
 <input id="shop" placeholder="اسم المحل">
 
@@ -236,6 +234,10 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 <div id="sheet" class="section">
 
 <button onclick="downloadTable()">تحميل صورة الجدول</button>
+
+  <button onclick="clearAllOrders()" style="background:red;color:white;margin-bottom:10px;">
+حذف كل الطلبات
+</button>
 
 <div id="tableArea">
 
@@ -283,6 +285,14 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 
 <script>
 
+  function clearAllOrders(){
+  if(confirm("هل أنت متأكد من حذف جميع الطلبات؟")){
+    orders = []
+    localStorage.setItem("orders", JSON.stringify(orders))
+    updateTable()
+  }
+}
+
 let orders=JSON.parse(localStorage.getItem("orders")||"[]")
 
 function home(){
@@ -300,7 +310,7 @@ document.getElementById("deliveryPrice").value=p
 
 function createOrder(){
 
-let name=document.getElementById("customerName").value
+
 let shop=document.getElementById("shop").value
 let order=document.getElementById("orderText").value
 let from = document.getElementById("timeFrom").value
@@ -328,8 +338,8 @@ let price=document.getElementById("deliveryPrice").value
 
 
 let message=`Delivery سريع 💨
-عزيزي: ${name}
-المحل: ${shop}
+عزيزي الزبون
+المحل:${shop}
 طلبك هو: ${order}
 سعر التوصيل:${price} شيكل
 السعر شامل التوصيل {}
@@ -350,6 +360,11 @@ date:Date.now()
 localStorage.setItem("orders",JSON.stringify(orders))
 
 updateTable()
+
+  document.getElementById("orderText").value = ""
+document.getElementById("deliveryPrice").value = ""
+document.getElementById("timeFrom").value = ""
+document.getElementById("timeTo").value = ""
 
 }
 
