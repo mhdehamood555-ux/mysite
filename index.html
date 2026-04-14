@@ -365,10 +365,12 @@ localStorage.setItem("orders",JSON.stringify(orders))
 
 updateTable()
 
-  document.getElementById("orderText").value = ""
+// تفريغ الحقول بعد إرسال الطلب
+document.getElementById("orderText").value = ""
 document.getElementById("deliveryPrice").value = ""
 document.getElementById("timeFrom").value = ""
 document.getElementById("timeTo").value = ""
+document.getElementById("shop").value = ""
 
 }
 
