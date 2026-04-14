@@ -208,6 +208,8 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
   <input id="timeFrom" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="من (دقيقة)">
   <input id="timeTo" type="tel" inputmode="numeric" pattern="[0-9]*" placeholder="إلى (دقيقة)">
 </div>
+
+  
   
 <h3>سعر التوصيل</h3>
 
@@ -224,6 +226,8 @@ background:radial-gradient(circle at 50% 0%,rgba(255,255,200,0.25),transparent 6
 <input id="deliveryPrice" placeholder="السعر المختار" readonly>
 
 <br>
+
+  <input id="totalPrice" placeholder="السعر شامل">
 
 <button class="big" onclick="createOrder()">إرسال</button>
 
@@ -315,6 +319,7 @@ let shop=document.getElementById("shop").value
 let order=document.getElementById("orderText").value
 let from = document.getElementById("timeFrom").value
 let to = document.getElementById("timeTo").value
+  let totalPrice = document.getElementById("totalPrice").value
 
 let timeText = ""
 
@@ -338,13 +343,12 @@ let price=document.getElementById("deliveryPrice").value
 
 
 let message=`Delivery سريع 💨
-عزيزي الزبون
+
 المحل:${shop}
 طلبك هو: ${order}
 سعر التوصيل:${price} شيكل
-السعر شامل التوصيل {}
-${timeText}
-{الطلب حالياً في مرحلة التحضير}.`
+السعر شامل: ${totalPrice} شيكل
+${timeText}`
 
 
 navigator.clipboard.writeText(message)
